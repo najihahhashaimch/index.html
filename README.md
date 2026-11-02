@@ -432,8 +432,59 @@ function saveMemory(){
  document.getElementById('memoryNote').value='';
 }
 </script>
-</body>
-</html>
 
-</body>
-</html>
+<!-- TRAVELMATE AI PART 3: LOCAL STORAGE -->
+
+<script>
+const travelKeys = [
+ 'planList',
+ 'shoppingList',
+ 'packingList',
+ 'expenseList',
+ 'memoryList'
+];
+
+function saveTravelData(){
+ travelKeys.forEach(id=>{
+  const el=document.getElementById(id);
+  if(el){
+   localStorage.setItem('travelmate_'+id,el.innerHTML);
+  }
+ });
+ localStorage.setItem('travelmate_expenses',travelExpenses);
+}
+
+function loadTravelData(){
+ travelKeys.forEach(id=>{
+  const el=document.getElementById(id);
+  const saved=localStorage.getItem('travelmate_'+id);
+  if(el && saved)el.innerHTML=saved;
+ });
+
+ const total=Number(localStorage.getItem('travelmate_expenses')||0);
+ travelExpenses=total;
+ document.getElementById('expenseTotal').textContent=
+  'Total: RM'+total.toFixed(2);
+}
+
+window.addEventListener('DOMContentLoaded',loadTravelData);
+
+const oldAddTravelItem=addTravelItem;
+addTravelItem=function(id,value){
+ oldAddTravelItem(id,value);
+ saveTravelData();
+};
+
+const oldAddExpense=addExpense;
+addExpense=function(){
+ oldAddExpense();
+ saveTravelData();
+};
+
+const oldSaveMemory=saveMemory;
+saveMemory=function(){
+ oldSaveMemory();
+ saveTravelData();
+};
+</script>
+
